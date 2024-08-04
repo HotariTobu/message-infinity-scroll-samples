@@ -1,5 +1,4 @@
 import { ChatHeader } from './components/chat-header'
-import { Normal } from './components/message-list/normal'
 import { ChatFooter } from './components/chat-footer'
 import { useMessagesFaker } from './hooks/useMessages'
 import { useState } from 'react'
@@ -10,9 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Normal } from './components/message-list/normal'
+import { ReactVirtuoso } from './components/message-list/react-virtuoso'
 
 const messageListComponentMap = {
-  normal: Normal,
+  Normal,
+  ReactVirtuoso,
 } as const
 type MessageListComponentKey = keyof typeof messageListComponentMap
 
@@ -20,7 +22,7 @@ export default function App() {
   useMessagesFaker()
 
   const [messageListComponentKey, setMessageListComponentKey] =
-    useState<MessageListComponentKey>('normal')
+    useState<MessageListComponentKey>('Normal')
   const handleSelectChange = (value: string) => {
     setMessageListComponentKey(value as MessageListComponentKey)
   }
