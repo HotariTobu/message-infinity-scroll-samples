@@ -7,7 +7,7 @@ import { FormEvent } from 'react'
 
 export const ChatFooter = () => {
   const { user } = useUserStore()
-  const addMessage = useMessagesStore(state => state.addMessage)
+  const addMessage = useMessagesStore(state => state.addRecentMessage)
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

@@ -7,55 +7,86 @@ export const Normal = () => {
   const { messages, isLoading, hasMore, loadMore } = useMessages()
 
   const ref = useRef({
-    scrollAreaElement: null as Element | null,
-    loadingTriggerElement: null as Element | null,
+    scrollArea: null as Element | null,
+    header: null as Element | null,
+    footer: null as Element | null,
+    atBottom: false,
   })
 
-  const setScrollAreaRef = (element: Element | null) => {
-    ref.current.scrollAreaElement = element
-  }
-
-  const setLoadingTriggerRef = (element: Element | null) => {
-    ref.current.loadingTriggerElement = element
-  }
-
   useEffect(() => {
-    const { scrollAreaElement, loadingTriggerElement } = ref.current
-    if (scrollAreaElement === null || loadingTriggerElement === null) {
+    const { scrollArea, header, footer } = ref.current
+    if (scrollArea === null || header === null || footer === null) {
       return
     }
 
-    const observer = new IntersectionObserver(
-      async entries => {
-        const [entry] = entries
+    const handleIntersection = async (entry: IntersectionObserverEntry) => {
+      if (entry.target === footer) {
+        ref.current.atBottom = entry.isIntersecting
+      } else if (entry.target === header) {
         if (!entry.isIntersecting) {
           return
         }
 
         if (await loadMore()) {
-          scrollAreaElement.scroll(0, 500)
+          scrollArea.scroll(0, 500)
         }
-      },
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(handleIntersection),
       {
-        root: scrollAreaElement,
+        root: scrollArea,
       }
     )
 
-    observer.observe(loadingTriggerElement)
+    observer.observe(header)
+    observer.observe(footer)
 
     return () => observer.disconnect()
   }, [loadMore])
 
+  useEffect(() => {
+    const { footer, atBottom } = ref.current
+    if (footer === null) {
+      return
+    }
+
+    if (!atBottom) {
+      return
+    }
+
+    footer.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    })
+  }, [messages])
+
+  useEffect(() => {
+    const { footer } = ref.current
+    if (footer === null) {
+      return
+    }
+
+    footer.scrollIntoView({
+      block: 'end',
+    })
+  }, [])
+
   return (
-    <div className="relative h-full overflow-auto" ref={setScrollAreaRef}>
+    <div
+      className="relative h-full overflow-auto"
+      ref={element => (ref.current.scrollArea = element)}
+    >
       <div className="p-2 gap-2 flex flex-col-reverse absolute left-0 right-0">
+        <div ref={element => (ref.current.footer = element)} />
         {messages.map(message => (
           <MessageCard message={message} key={message.messageId} />
         ))}
         <LoadingHeader
           isLoading={isLoading}
           hasMore={hasMore}
-          ref={setLoadingTriggerRef}
+          ref={element => (ref.current.header = element)}
           onClick={loadMore}
         />
       </div>
