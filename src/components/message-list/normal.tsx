@@ -44,6 +44,7 @@ export const Normal = () => {
     return () => observer.disconnect()
   }, [loadMore])
 
+  // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
     const { scrollArea, lastLoadedArea } = ref.current
     if (scrollArea === null || lastLoadedArea === null) {
@@ -56,6 +57,7 @@ export const Normal = () => {
     })
   }, [lastLoadedMessages])
 
+  // Scroll to the bottom when a new message comes.
   useEffect(() => {
     const { footer, nearBottom } = ref.current
     if (footer === null || !nearBottom) {
@@ -68,6 +70,7 @@ export const Normal = () => {
     })
   }, [messages])
 
+  // Scroll to the bottom at first.
   useEffect(() => {
     const { footer } = ref.current
     if (footer === null) {

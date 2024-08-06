@@ -57,6 +57,7 @@ export const TanstackReactVirtual = () => {
   const totalSize = virtualizer.getTotalSize()
   const virtualItems = virtualizer.getVirtualItems()
 
+  // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
     const { virtualizer, scrollArea } = ref.current
     if (virtualizer === null || scrollArea === null) {
@@ -66,6 +67,7 @@ export const TanstackReactVirtual = () => {
     virtualizer.scrollToIndex(lastLoadedMessages.length, { align: 'start' })
   }, [lastLoadedMessages])
 
+  // Scroll to the bottom when a new message comes.
   useEffect(() => {
     const { scrollArea, nearBottom } = ref.current
     if (scrollArea === null || !nearBottom) {
@@ -75,6 +77,7 @@ export const TanstackReactVirtual = () => {
     scrollArea.scrollTo({ top: totalSize, behavior: 'smooth' })
   }, [totalSize])
 
+  // Scroll to the bottom at first.
   useEffect(() => {
     const { footer } = ref.current
     if (footer === null) {

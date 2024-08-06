@@ -24,9 +24,11 @@ export const ReactVirtuoso = () => {
 
   const handleAtTop = (atTop: boolean) => {
     if (atTop) {
-    loadMore()
+      loadMore()
+    }
   }
-  }
+
+  // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
     const { virtuoso } = ref.current
     if (virtuoso === null) {
@@ -36,6 +38,7 @@ export const ReactVirtuoso = () => {
     virtuoso.scrollToIndex(lastLoadedMessages.length)
   }, [lastLoadedMessages])
 
+  // Scroll to the bottom when a new message comes.
   useEffect(() => {
     const { virtuoso, nearBottom } = ref.current
     if (virtuoso === null || !nearBottom) {
@@ -47,6 +50,7 @@ export const ReactVirtuoso = () => {
     })
   }, [messages])
 
+  // Scroll to the bottom at first.
   useEffect(() => {
     const { virtuoso } = ref.current
     if (virtuoso === null) {
