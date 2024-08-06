@@ -22,19 +22,11 @@ export const ReactVirtuoso = () => {
     nearBottom: false,
   })
 
-  const handleAtTop = async (atTop: boolean) => {
-    const { virtuoso } = ref.current
-    if (virtuoso === null) {
-      return
-    }
-
-    if (!atTop) {
-      return
-    }
-
+  const handleAtTop = (atTop: boolean) => {
+    if (atTop) {
     loadMore()
   }
-
+  }
   useEffect(() => {
     const { virtuoso } = ref.current
     if (virtuoso === null) {
