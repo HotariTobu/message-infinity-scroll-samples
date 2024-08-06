@@ -75,7 +75,7 @@ export const TanstackReactVirtual = () => {
         }}
       >
         <div
-          className="absolute left-0 right-0"
+          className="absolute inset-x-0"
           style={{
             top: firstVirtualItem?.start,
           }}
