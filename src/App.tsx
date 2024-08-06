@@ -11,10 +11,12 @@ import {
 } from '@/components/ui/select'
 import { Normal } from './components/message-list/normal'
 import { ReactVirtuoso } from './components/message-list/react-virtuoso'
+import { TanstackReactVirtual } from './components/message-list/tanstack-react-virtual'
 
 const messageListComponentMap = {
   Normal,
   ReactVirtuoso,
+  TanstackReactVirtual,
 } as const
 type MessageListComponentKey = keyof typeof messageListComponentMap
 
