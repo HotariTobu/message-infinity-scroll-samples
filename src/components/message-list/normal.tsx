@@ -4,13 +4,15 @@ import { useMessages } from '@/hooks/useMessages'
 import { useEffect, useRef } from 'react'
 
 export const Normal = () => {
-  const { messages, isLoading, hasMore, loadMore } = useMessages()
+  const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
+    useMessages()
 
   const ref = useRef({
     scrollArea: null as Element | null,
+    lastLoadedArea: null as Element | null,
     header: null as Element | null,
     footer: null as Element | null,
-    atBottom: false,
+    nearBottom: false,
   })
 
   useEffect(() => {
@@ -21,14 +23,10 @@ export const Normal = () => {
 
     const handleIntersection = async (entry: IntersectionObserverEntry) => {
       if (entry.target === footer) {
-        ref.current.atBottom = entry.isIntersecting
+        ref.current.nearBottom = entry.isIntersecting
       } else if (entry.target === header) {
-        if (!entry.isIntersecting) {
-          return
-        }
-
-        if (await loadMore()) {
-          scrollArea.scroll(0, 500)
+        if (entry.isIntersecting) {
+          loadMore()
         }
       }
     }
@@ -47,8 +45,20 @@ export const Normal = () => {
   }, [loadMore])
 
   useEffect(() => {
-    const { footer, atBottom } = ref.current
-    if (footer === null || !atBottom) {
+    const { scrollArea, lastLoadedArea } = ref.current
+    if (scrollArea === null || lastLoadedArea === null) {
+      return
+    }
+
+    const { height } = lastLoadedArea.getBoundingClientRect()
+    scrollArea.scrollTo({
+      top: height,
+    })
+  }, [lastLoadedMessages])
+
+  useEffect(() => {
+    const { footer, nearBottom } = ref.current
+    if (footer === null || !nearBottom) {
       return
     }
 
@@ -75,11 +85,20 @@ export const Normal = () => {
       ref={element => (ref.current.scrollArea = element)}
     >
       <div className="absolute inset-x-0">
-        <div className="m-2 gap-2 flex flex-col-reverse relative">
+        <div
+          className="p-2 pb-0 gap-2 flex flex-col-reverse"
+          ref={element => (ref.current.lastLoadedArea = element)}
+        >
+          {lastLoadedMessages.map(message => (
+            <MessageCard message={message} key={message.messageId} />
+          ))}
+        </div>
+        <div className="p-2 gap-2 flex flex-col-reverse">
           {messages.map(message => (
             <MessageCard message={message} key={message.messageId} />
           ))}
         </div>
+
         <LoadingHeader
           isLoading={isLoading}
           hasMore={hasMore}
@@ -87,7 +106,7 @@ export const Normal = () => {
           onClick={loadMore}
         />
         <div
-          className="h-16 absolute bottom-0 inset-x-0 bg-red-400"
+          className="h-32 absolute bottom-0"
           ref={element => (ref.current.footer = element)}
         />
       </div>

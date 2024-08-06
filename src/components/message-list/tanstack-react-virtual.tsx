@@ -1,72 +1,95 @@
 import { useMessages } from '@/hooks/useMessages'
-import { useVirtualizer } from '@tanstack/react-virtual'
+import { useVirtualizer, Virtualizer } from '@tanstack/react-virtual'
 import { useEffect, useRef } from 'react'
 import { MessageCard } from '../message-card'
 import { LoadingHeader } from '../loading-header'
 
 export const TanstackReactVirtual = () => {
-  const { messages, isLoading, hasMore, loadMore } = useMessages()
+  const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
+    useMessages()
 
   const ref = useRef({
+    virtualizer: null as Virtualizer<Element, Element> | null,
     scrollArea: null as Element | null,
+    header: null as Element | null,
+    footer: null as Element | null,
+    nearBottom: false,
   })
 
+  useEffect(() => {
+    const { scrollArea, header, footer } = ref.current
+    if (scrollArea === null || header === null || footer === null) {
+      return
+    }
+
+    const handleIntersection = async (entry: IntersectionObserverEntry) => {
+      if (entry.target === footer) {
+        ref.current.nearBottom = entry.isIntersecting
+      } else if (entry.target === header) {
+        if (entry.isIntersecting) {
+          loadMore()
+        }
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(handleIntersection),
+      {
+        root: scrollArea,
+      }
+    )
+
+    observer.observe(header)
+    observer.observe(footer)
+
+    return () => observer.disconnect()
+  }, [loadMore])
+
+  const totalMessages = messages.concat(lastLoadedMessages)
+
   const virtualizer = useVirtualizer({
-    count: messages.length + 1,
+    count: totalMessages.length,
     getScrollElement: () => ref.current.scrollArea,
     estimateSize: () => 100,
+    onChange: virtualizer => (ref.current.virtualizer = virtualizer),
   })
 
   const totalSize = virtualizer.getTotalSize()
   const virtualItems = virtualizer.getVirtualItems()
 
-  const firstVirtualItem = virtualItems.at(0)
-  const lastVirtualItem = virtualItems.at(-1)
-
-  const nearTop = firstVirtualItem?.index === 0
-  const nearBottom = lastVirtualItem?.index === messages.length
-
-  const handleScroll = async () => {
-    const { scrollArea } = ref.current
-    if (scrollArea === null) {
+  useEffect(() => {
+    const { virtualizer, scrollArea } = ref.current
+    if (virtualizer === null || scrollArea === null) {
       return
     }
 
-    const atTop = scrollArea.scrollTop === 0
-    if (!atTop) {
-      return
-    }
-
-    if (await loadMore()) {
-      virtualizer.scrollToIndex(10 + 1, { align: 'start' })
-    }
-  }
+    virtualizer.scrollToIndex(lastLoadedMessages.length, { align: 'start' })
+  }, [lastLoadedMessages])
 
   useEffect(() => {
-    const { scrollArea } = ref.current
-    if (scrollArea === null) {
+    const { scrollArea, nearBottom } = ref.current
+    if (scrollArea === null || !nearBottom) {
       return
     }
 
-    if (nearBottom) {
-      scrollArea.scroll({ top: totalSize, behavior: 'smooth' })
-    }
-  }, [nearBottom, totalSize])
+    scrollArea.scrollTo({ top: totalSize, behavior: 'smooth' })
+  }, [totalSize])
 
   useEffect(() => {
-    const { scrollArea } = ref.current
-    if (scrollArea === null) {
+    const { footer } = ref.current
+    if (footer === null) {
       return
     }
 
-    scrollArea.scroll({ top: scrollArea.scrollHeight })
+    footer.scrollIntoView({
+      block: 'end',
+    })
   }, [])
 
   return (
     <div
       className="h-full overflow-auto contain-strict"
       ref={element => (ref.current.scrollArea = element)}
-      onScroll={handleScroll}
     >
       <div
         className="relative"
@@ -75,29 +98,39 @@ export const TanstackReactVirtual = () => {
         }}
       >
         <div
-          className="absolute inset-x-0"
+          className="pb-2 absolute inset-x-0"
           style={{
-            top: firstVirtualItem?.start,
+            top: virtualItems.at(0)?.start,
           }}
         >
-          {nearTop && (
-            <div data-index={0} ref={firstVirtualItem.measureElement}>
-              <LoadingHeader isLoading={isLoading} hasMore={hasMore} />
-            </div>
-          )}
-          {virtualItems.slice(nearTop ? 1 : 0).map(virtualItem => {
-            const message = messages[messages.length - virtualItem.index]
+          {virtualItems.map(virtualItem => {
+            const message = totalMessages.at(-virtualItem.index - 1)
+            if (typeof message === 'undefined') {
+              return
+            }
+
             return (
               <div
                 key={message.messageId}
                 data-index={virtualItem.index}
                 ref={virtualItem.measureElement}
               >
-                <MessageCard className="px-2 py-1" message={message} />
+                <MessageCard className="px-2 pt-2" message={message} />
               </div>
             )
           })}
         </div>
+
+        <LoadingHeader
+          isLoading={isLoading}
+          hasMore={hasMore}
+          ref={element => (ref.current.header = element)}
+          onClick={loadMore}
+        />
+        <div
+          className="h-32 absolute bottom-0"
+          ref={element => (ref.current.footer = element)}
+        />
       </div>
     </div>
   )

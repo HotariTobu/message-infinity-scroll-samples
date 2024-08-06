@@ -6,7 +6,14 @@ export const useMessagesStore = create<{
   recentMessages: Message[]
   setPastMessages: (userId: string, bodies: string[]) => void
   addRecentMessage: (userId: string, body: string) => void
-}>(set => ({
+  fetchPastMessages: (
+    cursor?: number | undefined,
+    limit?: number | undefined
+  ) => {
+    messages: Message[]
+    nextCursor?: number | null
+  }
+}>((set, get) => ({
   pastMessages: [],
   recentMessages: [],
   setPastMessages: (userId, bodies) => {
@@ -26,5 +33,13 @@ export const useMessagesStore = create<{
       timestamp: new Date(),
     }
     set(state => ({ recentMessages: [newMessage, ...state.recentMessages] }))
+  },
+  fetchPastMessages: (cursor = 0, limit = 10) => {
+    const { pastMessages } = get()
+    const nextCursor = cursor + limit
+    return {
+      messages: pastMessages.slice(cursor, nextCursor),
+      nextCursor: nextCursor < pastMessages.length ? nextCursor : null,
+    }
   },
 }))

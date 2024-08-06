@@ -10,15 +10,16 @@ type Context = {
 }
 
 const Header = (props: { context?: Context }) =>
-  typeof props.context === 'undefined' ||
-  props.context.hasMore || <LoadingHeader {...props.context} />
+  typeof props.context === 'undefined' || <LoadingHeader {...props.context} />
+
+const Footer = () => <div className="h-2" />
 
 export const ReactVirtuoso = () => {
-  const { messages, loadMore, ...context } = useMessages()
+  const { lastLoadedMessages, messages, loadMore, ...context } = useMessages()
 
   const ref = useRef({
     virtuoso: null as VirtuosoHandle | null,
-    endIndex: 0,
+    nearBottom: false,
   })
 
   const handleAtTop = async (atTop: boolean) => {
@@ -31,18 +32,21 @@ export const ReactVirtuoso = () => {
       return
     }
 
-    if (await loadMore()) {
-      virtuoso.scrollToIndex(10)
-    }
+    loadMore()
   }
 
   useEffect(() => {
-    const { virtuoso, endIndex } = ref.current
+    const { virtuoso } = ref.current
     if (virtuoso === null) {
       return
     }
 
-    if (endIndex < messages.length - 3) {
+    virtuoso.scrollToIndex(lastLoadedMessages.length)
+  }, [lastLoadedMessages])
+
+  useEffect(() => {
+    const { virtuoso, nearBottom } = ref.current
+    if (virtuoso === null || !nearBottom) {
       return
     }
 
@@ -65,19 +69,17 @@ export const ReactVirtuoso = () => {
   return (
     <Virtuoso
       ref={virtuoso => (ref.current.virtuoso = virtuoso)}
-      data={messages.toReversed()}
-      initialTopMostItemIndex={{ index: 'LAST' }}
+      data={messages.concat(lastLoadedMessages).toReversed()}
       context={context}
-      components={{ Header }}
+      components={{ Header, Footer }}
       followOutput={false}
+      atTopThreshold={64}
       atTopStateChange={handleAtTop}
-      rangeChanged={range => (ref.current.endIndex = range.endIndex)}
+      atBottomThreshold={128}
+      atBottomStateChange={atBottom => (ref.current.nearBottom = atBottom)}
       computeItemKey={(_, message) => message.messageId}
       itemContent={(_, message) => (
-        <MessageCard
-          className="px-2 py-1 first:pt-2 last:pb-2"
-          message={message}
-        />
+        <MessageCard className="px-2 pt-2" message={message} />
       )}
     />
   )

@@ -1,4 +1,6 @@
 import { useMessagesStore } from '@/stores/messages'
+import { Message } from '@/types/message'
+import { sleep } from '@/utils/sleep'
 import { faker } from '@faker-js/faker'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -29,28 +31,37 @@ export const useMessagesFaker = (initialMessageCount = 1000) => {
   }, [initialMessageCount, setPastMessages, addRecentMessage])
 }
 
-export const useMessages = (pageSize = 10) => {
-  const { pastMessages, recentMessages } = useMessagesStore()
-  const [pageCount, setPageCount] = useState(1)
+export const useMessages = () => {
+  const { recentMessages, fetchPastMessages } = useMessagesStore()
 
-  const selectedMessages = pastMessages.slice(0, pageSize * pageCount)
+  const [pastMessages, setPastMessages] = useState<Message[]>([])
+  const [lastLoadedMessages, setLastLoadedMessages] = useState<Message[]>([])
+  const [cursor, setCursor] = useState<number | null | undefined>()
+
+  const messages = recentMessages.concat(pastMessages)
   const [isLoading, setIsLoading] = useState(false)
-  const hasMore = pastMessages.length > selectedMessages.length
-  const loadMore = useCallback(async () => {
-    if (hasMore) {
-      setIsLoading(true)
-      await new Promise(resolve => setTimeout(resolve, 200))
-      setPageCount(prevPageCount => prevPageCount + 1)
-      setIsLoading(false)
-      return true
-    } else {
-      return false
-    }
-  }, [hasMore])
+  const hasMore = cursor !== null
 
-  const messages = recentMessages.concat(selectedMessages)
+  const loadMore = useCallback(async () => {
+    if (cursor === null) {
+      return
+    }
+
+    setIsLoading(true)
+
+    const { messages, nextCursor } = fetchPastMessages(cursor)
+
+    await sleep(200)
+
+    setPastMessages(pastMessages.concat(lastLoadedMessages))
+    setLastLoadedMessages(messages)
+    setCursor(nextCursor)
+
+    setIsLoading(false)
+  }, [fetchPastMessages, pastMessages, lastLoadedMessages, cursor])
 
   return {
+    lastLoadedMessages,
     messages,
     isLoading,
     hasMore,
