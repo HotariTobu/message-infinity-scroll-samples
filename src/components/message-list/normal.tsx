@@ -48,11 +48,7 @@ export const Normal = () => {
 
   useEffect(() => {
     const { footer, atBottom } = ref.current
-    if (footer === null) {
-      return
-    }
-
-    if (!atBottom) {
+    if (footer === null || !atBottom) {
       return
     }
 
@@ -75,19 +71,24 @@ export const Normal = () => {
 
   return (
     <div
-      className="relative h-full overflow-auto"
+      className="h-full overflow-auto relative"
       ref={element => (ref.current.scrollArea = element)}
     >
-      <div className="p-2 gap-2 flex flex-col-reverse absolute left-0 right-0">
-        <div ref={element => (ref.current.footer = element)} />
-        {messages.map(message => (
-          <MessageCard message={message} key={message.messageId} />
-        ))}
+      <div className="absolute inset-x-0">
+        <div className="m-2 gap-2 flex flex-col-reverse relative">
+          {messages.map(message => (
+            <MessageCard message={message} key={message.messageId} />
+          ))}
+        </div>
         <LoadingHeader
           isLoading={isLoading}
           hasMore={hasMore}
           ref={element => (ref.current.header = element)}
           onClick={loadMore}
+        />
+        <div
+          className="h-16 absolute bottom-0 inset-x-0 bg-red-400"
+          ref={element => (ref.current.footer = element)}
         />
       </div>
     </div>
