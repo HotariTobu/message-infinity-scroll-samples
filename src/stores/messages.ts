@@ -8,7 +8,7 @@ export const useMessagesStore = create<{
   addRecentMessage: (userId: string, body: string) => void
 }>(set => ({
   pastMessages: [],
-  recentMessages: [] as Message[],
+  recentMessages: [],
   setPastMessages: (userId, bodies) => {
     const newMessages = bodies.map<Message>((body, index) => ({
       messageId: index.toString(),
