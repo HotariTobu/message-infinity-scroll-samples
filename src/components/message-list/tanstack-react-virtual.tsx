@@ -1,5 +1,5 @@
 import { useMessages } from '@/hooks/useMessages'
-import { useVirtualizer, Virtualizer } from '@tanstack/react-virtual'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { useEffect, useRef } from 'react'
 import { MessageCard } from '../message-card'
 import { LoadingHeader } from '../loading-header'
@@ -9,7 +9,6 @@ export const TanstackReactVirtual = () => {
     useMessages()
 
   const ref = useRef({
-    virtualizer: null as Virtualizer<Element, Element> | null,
     scrollArea: null as Element | null,
     header: null as Element | null,
     footer: null as Element | null,
@@ -51,7 +50,6 @@ export const TanstackReactVirtual = () => {
     count: totalMessages.length,
     getScrollElement: () => ref.current.scrollArea,
     estimateSize: () => 100,
-    onChange: virtualizer => (ref.current.virtualizer = virtualizer),
   })
 
   const totalSize = virtualizer.getTotalSize()
@@ -59,13 +57,8 @@ export const TanstackReactVirtual = () => {
 
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
-    const { virtualizer, scrollArea } = ref.current
-    if (virtualizer === null || scrollArea === null) {
-      return
-    }
-
     virtualizer.scrollToIndex(lastLoadedMessages.length, { align: 'start' })
-  }, [lastLoadedMessages])
+  }, [lastLoadedMessages, virtualizer])
 
   // Scroll to the bottom when a new message comes.
   useEffect(() => {
