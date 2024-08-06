@@ -8,7 +8,7 @@ export const LoadingHeader = forwardRef<
     hasMore: boolean
   } & HTMLAttributes<HTMLDivElement>
 >(({ hasMore, isLoading, className, ...props }, ref) => (
-  <div className={cn('absolute inset-x-0 top-0', className)} ref={ref} {...props}>
+  <div className={cn('z-10 absolute inset-x-0 top-0', className)} ref={ref} {...props}>
     <img
       className={cn(
         'mx-auto transition-opacity',
