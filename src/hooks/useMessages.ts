@@ -62,6 +62,13 @@ export const useMessages = () => {
 
   return {
     lastLoadedMessages,
+    /**
+     * Messages are in descending order by timestamp.
+     * Therefore, the latest message is `messages[0]`.
+     *
+     * `messages` does not include messages in `lastLoadedMessages`.
+     * Total messages is `messages.concat(lastLoadedMessages)`.
+     */
     messages,
     isLoading,
     hasMore,
