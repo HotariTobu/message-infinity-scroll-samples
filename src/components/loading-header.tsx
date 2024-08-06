@@ -7,9 +7,17 @@ export const LoadingHeader = forwardRef<
     isLoading: boolean
     hasMore: boolean
   } & HTMLAttributes<HTMLDivElement>
->(({ isLoading, hasMore, className, ...props }, ref) => (
-  <div className={cn('text-center', className)} ref={ref} {...props}>
-    {isLoading ? 'Loading...' : hasMore ? 'Load more' : 'Loaded all!'}
+>(({ hasMore, isLoading, className, ...props }, ref) => (
+  <div className={cn('absolute inset-x-0 top-0', className)} ref={ref} {...props}>
+    <img
+      className={cn(
+        'mx-auto transition-opacity',
+        isLoading && 'animate-spin',
+        hasMore || 'opacity-0'
+      )}
+      src="spinner.svg"
+      alt="loading spinner"
+    />
   </div>
 ))
 LoadingHeader.displayName = 'LoadingHeader'
