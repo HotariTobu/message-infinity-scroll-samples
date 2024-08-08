@@ -65,7 +65,6 @@ export const ReactVirtuoso = () => {
   return (
     <Virtuoso
       ref={virtuoso => (ref.current.virtuoso = virtuoso)}
-      data={messages.concat(lastLoadedMessages).toReversed()}
       context={context}
       components={{ Header, Footer }}
       followOutput={false}
@@ -73,6 +72,7 @@ export const ReactVirtuoso = () => {
       atTopStateChange={handleAtTop}
       atBottomThreshold={128}
       atBottomStateChange={atBottom => (ref.current.nearBottom = atBottom)}
+      data={messages.concat(lastLoadedMessages).toReversed()}
       computeItemKey={(_, message) => message.messageId}
       itemContent={(_, message) => (
         <MessageCard className="px-2 pt-2" message={message} />
