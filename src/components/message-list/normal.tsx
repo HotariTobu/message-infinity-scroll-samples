@@ -51,9 +51,8 @@ export const Normal = () => {
       return
     }
 
-    const { height } = lastLoadedArea.getBoundingClientRect()
     scrollArea.scrollTo({
-      top: height,
+      top: lastLoadedArea.clientHeight,
     })
   }, [lastLoadedMessages])
 
