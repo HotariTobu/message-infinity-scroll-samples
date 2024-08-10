@@ -91,12 +91,12 @@ export const ReactWindow = () => {
     }
 
     const handleIntersection = async (entry: IntersectionObserverEntry) => {
-      if (entry.target === footer) {
-        ref.current.nearBottom = entry.isIntersecting
-      } else if (entry.target === header) {
+      if (entry.target === header) {
         if (entry.isIntersecting) {
           loadMore()
         }
+      } else if (entry.target === footer) {
+        ref.current.nearBottom = entry.isIntersecting
       }
     }
 
