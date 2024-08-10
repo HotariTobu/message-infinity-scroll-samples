@@ -47,6 +47,10 @@ export const useMessages = () => {
       return
     }
 
+    if (isLoading) {
+      return
+    }
+
     setIsLoading(true)
 
     const { messages, nextCursor } = fetchPastMessages(cursor)
@@ -58,7 +62,7 @@ export const useMessages = () => {
     setCursor(nextCursor)
 
     setIsLoading(false)
-  }, [fetchPastMessages, pastMessages, lastLoadedMessages, cursor])
+  }, [fetchPastMessages, pastMessages, lastLoadedMessages, cursor, isLoading])
 
   return {
     lastLoadedMessages,
