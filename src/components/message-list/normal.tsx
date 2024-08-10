@@ -89,7 +89,7 @@ export const Normal = () => {
     >
       <div className="relative">
         <div
-          className="p-2 pb-0 gap-2 flex flex-col-reverse"
+          className="p-2 empty:pt-0 pb-0 gap-2 flex flex-col-reverse"
           ref={element => (ref.current.lastLoadedArea = element)}
         >
           {lastLoadedMessages.map(message => (
