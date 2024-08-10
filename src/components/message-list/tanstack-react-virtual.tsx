@@ -106,13 +106,13 @@ export const TanstackReactVirtual = () => {
             }
 
             return (
-              <div
+              <MessageCard
+                className="px-2 pt-2"
+                message={message}
                 key={message.messageId}
                 data-index={virtualItem.index}
                 ref={virtualItem.measureElement}
-              >
-                <MessageCard className="px-2 pt-2" message={message} />
-              </div>
+              />
             )
           })}
         </div>
