@@ -9,11 +9,9 @@ export const ReactEasyInfiniteScrollHook = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
     useMessages()
 
-  const totalMessages = messages.concat(lastLoadedMessages)
-
   const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>({
     next: loadMore,
-    rowCount: totalMessages.length,
+    rowCount: messages.length + lastLoadedMessages.length,
     hasMore: { up: hasMore },
     initialScroll: { top: Infinity },
     scrollThreshold: '64px',
