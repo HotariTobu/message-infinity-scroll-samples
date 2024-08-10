@@ -57,9 +57,7 @@ export const ReactVirtuoso = () => {
       return
     }
 
-    setTimeout(() => {
-      virtuoso.scrollToIndex({ index: 'LAST' })
-    }, 300)
+    virtuoso.scrollToIndex({ index: 'LAST' })
   }, [])
 
   return (
