@@ -17,15 +17,16 @@ export const ReactEasyInfiniteScrollHook = () => {
     scrollThreshold: '64px',
   })
 
+  const lastLoadedAreaRef = useRef<HTMLDivElement | null>(null)
+  const footerRef = useRef<HTMLDivElement | null>(null)
+
   const ref = useRef({
-    lastLoadedArea: null as Element | null,
-    footer: null as Element | null,
     nearBottom: false,
   })
 
   useEffect(() => {
     const scrollArea = infiniteScrollRef.current
-    const { footer } = ref.current
+    const footer = footerRef.current
     if (scrollArea === null || footer === null) {
       return
     }
@@ -48,7 +49,7 @@ export const ReactEasyInfiniteScrollHook = () => {
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
     const scrollArea = infiniteScrollRef.current
-    const { lastLoadedArea } = ref.current
+    const lastLoadedArea = lastLoadedAreaRef.current
     if (scrollArea === null || lastLoadedArea === null) {
       return
     }
@@ -92,7 +93,7 @@ export const ReactEasyInfiniteScrollHook = () => {
       <div className="relative">
         <div
           className="p-2 empty:pt-0 pb-0 gap-2 flex flex-col-reverse"
-          ref={element => (ref.current.lastLoadedArea = element)}
+          ref={lastLoadedAreaRef}
         >
           {lastLoadedMessages.map(message => (
             <MessageCard message={message} key={message.messageId} />
@@ -105,7 +106,7 @@ export const ReactEasyInfiniteScrollHook = () => {
         </div>
 
         <LoadingTrigger isLoading={isLoading} hasMore={hasMore} />
-        <FollowingTrigger ref={element => (ref.current.footer = element)} />
+        <FollowingTrigger ref={footerRef} />
       </div>
     </div>
   )

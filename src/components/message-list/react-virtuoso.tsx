@@ -17,8 +17,9 @@ const Footer = () => <div className="h-2" />
 export const ReactVirtuoso = () => {
   const { lastLoadedMessages, messages, loadMore, ...context } = useMessages()
 
+  const virtuosoRef = useRef<VirtuosoHandle | null>(null)
+
   const ref = useRef({
-    virtuoso: null as VirtuosoHandle | null,
     nearBottom: false,
   })
 
@@ -30,7 +31,7 @@ export const ReactVirtuoso = () => {
 
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
-    const { virtuoso } = ref.current
+    const virtuoso = virtuosoRef.current
     if (virtuoso === null) {
       return
     }
@@ -40,7 +41,8 @@ export const ReactVirtuoso = () => {
 
   // Scroll to the bottom when a new message comes.
   useEffect(() => {
-    const { virtuoso, nearBottom } = ref.current
+    const virtuoso = virtuosoRef.current
+    const { nearBottom } = ref.current
     if (virtuoso === null || !nearBottom) {
       return
     }
@@ -55,7 +57,7 @@ export const ReactVirtuoso = () => {
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { virtuoso } = ref.current
+    const virtuoso = virtuosoRef.current
     if (virtuoso === null) {
       return
     }
@@ -67,7 +69,7 @@ export const ReactVirtuoso = () => {
 
   return (
     <Virtuoso
-      ref={virtuoso => (ref.current.virtuoso = virtuoso)}
+      ref={virtuosoRef}
       context={context}
       components={{ Header, Footer }}
       followOutput={false}

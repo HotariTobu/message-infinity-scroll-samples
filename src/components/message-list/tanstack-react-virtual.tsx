@@ -9,15 +9,18 @@ export const TanstackReactVirtual = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
     useMessages()
 
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
+  const footerRef = useRef<HTMLDivElement | null>(null)
+
   const ref = useRef({
-    scrollArea: null as Element | null,
-    header: null as Element | null,
-    footer: null as Element | null,
     nearBottom: false,
   })
 
   useEffect(() => {
-    const { scrollArea, header, footer } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const header = headerRef.current
+    const footer = footerRef.current
     if (scrollArea === null || header === null || footer === null) {
       return
     }
@@ -49,7 +52,7 @@ export const TanstackReactVirtual = () => {
 
   const virtualizer = useVirtualizer({
     count: totalMessages.length,
-    getScrollElement: () => ref.current.scrollArea,
+    getScrollElement: () => scrollAreaRef.current,
     estimateSize: () => 100,
   })
 
@@ -63,7 +66,8 @@ export const TanstackReactVirtual = () => {
 
   // Scroll to the bottom when a new message comes.
   useEffect(() => {
-    const { scrollArea, nearBottom } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const { nearBottom } = ref.current
     if (scrollArea === null || !nearBottom) {
       return
     }
@@ -76,7 +80,7 @@ export const TanstackReactVirtual = () => {
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { scrollArea } = ref.current
+    const scrollArea = scrollAreaRef.current
     if (scrollArea === null) {
       return
     }
@@ -87,10 +91,7 @@ export const TanstackReactVirtual = () => {
   }, [virtualizer])
 
   return (
-    <div
-      className="h-full overflow-auto contain-strict"
-      ref={element => (ref.current.scrollArea = element)}
-    >
+    <div className="h-full overflow-auto contain-strict" ref={scrollAreaRef}>
       <div
         className="relative"
         style={{
@@ -124,10 +125,10 @@ export const TanstackReactVirtual = () => {
         <LoadingTrigger
           isLoading={isLoading}
           hasMore={hasMore}
-          ref={element => (ref.current.header = element)}
+          ref={headerRef}
           onClick={loadMore}
         />
-        <FollowingTrigger ref={element => (ref.current.footer = element)} />
+        <FollowingTrigger ref={footerRef} />
       </div>
     </div>
   )

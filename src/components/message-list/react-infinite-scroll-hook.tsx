@@ -15,15 +15,17 @@ export const ReactInfiniteScrollHook = () => {
     onLoadMore: loadMore,
   })
 
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null)
+  const lastLoadedAreaRef = useRef<HTMLDivElement | null>(null)
+  const footerRef = useRef<HTMLDivElement | null>(null)
+
   const ref = useRef({
-    scrollArea: null as Element | null,
-    lastLoadedArea: null as Element | null,
-    footer: null as Element | null,
     nearBottom: false,
   })
 
   useEffect(() => {
-    const { scrollArea, footer } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const footer = footerRef.current
     if (scrollArea === null || footer === null) {
       return
     }
@@ -45,7 +47,8 @@ export const ReactInfiniteScrollHook = () => {
 
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
-    const { scrollArea, lastLoadedArea } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const lastLoadedArea = lastLoadedAreaRef.current
     if (scrollArea === null || lastLoadedArea === null) {
       return
     }
@@ -57,7 +60,8 @@ export const ReactInfiniteScrollHook = () => {
 
   // Scroll to the bottom when a new message comes.
   useEffect(() => {
-    const { scrollArea, nearBottom } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const { nearBottom } = ref.current
     if (scrollArea === null || !nearBottom) {
       return
     }
@@ -70,7 +74,7 @@ export const ReactInfiniteScrollHook = () => {
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { scrollArea } = ref.current
+    const scrollArea = scrollAreaRef.current
     if (scrollArea === null) {
       return
     }
@@ -82,9 +86,9 @@ export const ReactInfiniteScrollHook = () => {
 
   // `rootRef` seems to trigger re-render.
   const setRef = useCallback(
-    (element: Element | null) => {
+    (element: HTMLDivElement | null) => {
       rootRef(element)
-      ref.current.scrollArea = element
+      scrollAreaRef.current = element
     },
     [rootRef]
   )
@@ -94,7 +98,7 @@ export const ReactInfiniteScrollHook = () => {
       <div className="relative">
         <div
           className="p-2 empty:pt-0 pb-0 gap-2 flex flex-col-reverse"
-          ref={element => (ref.current.lastLoadedArea = element)}
+          ref={lastLoadedAreaRef}
         >
           {lastLoadedMessages.map(message => (
             <MessageCard message={message} key={message.messageId} />
@@ -111,7 +115,7 @@ export const ReactInfiniteScrollHook = () => {
           hasMore={hasMore}
           ref={infiniteRef}
         />
-        <FollowingTrigger ref={element => (ref.current.footer = element)} />
+        <FollowingTrigger ref={footerRef} />
       </div>
     </div>
   )

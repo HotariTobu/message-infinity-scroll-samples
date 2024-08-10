@@ -5,6 +5,7 @@ import {
   createContext,
   forwardRef,
   HTMLAttributes,
+  MutableRefObject,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -23,15 +24,15 @@ import { FollowingTrigger } from '../following-trigger'
 type Context = {
   isLoading: boolean
   hasMore: boolean
-  headerRef: (element: Element | null) => void
-  footerRef: (element: Element | null) => void
+  headerRef: MutableRefObject<HTMLDivElement | null>
+  footerRef: MutableRefObject<HTMLDivElement | null>
 }
 
 const Context = createContext<Context>({
   isLoading: false,
   hasMore: false,
-  headerRef: () => {},
-  footerRef: () => {},
+  headerRef: { current: null },
+  footerRef: { current: null },
 })
 
 type Data = {
@@ -74,18 +75,21 @@ export const ReactWindow = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
     useMessages()
 
+  const variableSizeListRef = useRef<VariableSizeList | null>(null)
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null)
+  const itemsContainerRef = useRef<HTMLDivElement | null>(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
+  const footerRef = useRef<HTMLDivElement | null>(null)
+
   const ref = useRef({
-    list: null as VariableSizeList | null,
-    scrollArea: null as Element | null,
-    itemsContainer: null as Element | null,
     itemSizes: [] as number[],
-    header: null as Element | null,
-    footer: null as Element | null,
     nearBottom: false,
   })
 
   useEffect(() => {
-    const { scrollArea, header, footer } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const header = headerRef.current
+    const footer = footerRef.current
     if (scrollArea === null || header === null || footer === null) {
       return
     }
@@ -113,23 +117,12 @@ export const ReactWindow = () => {
     return () => observer.disconnect()
   }, [loadMore])
 
-  const totalMessages = messages.concat(lastLoadedMessages)
-
-  const context: Context = {
-    isLoading,
-    hasMore,
-    headerRef: element => (ref.current.header = element),
-    footerRef: element => (ref.current.footer = element),
-  }
-
-  const data: Data = {
-    totalMessages,
-  }
-
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
-    const { list, scrollArea, itemSizes } = ref.current
-    if (list === null || scrollArea === null) {
+    const variableSizeList = variableSizeListRef.current
+    const scrollArea = scrollAreaRef.current
+    const { itemSizes } = ref.current
+    if (variableSizeList === null || scrollArea === null) {
       return
     }
 
@@ -147,13 +140,14 @@ export const ReactWindow = () => {
     })
 
     setTimeout(() => {
-      list.scrollToItem(length, 'start')
+      variableSizeList.scrollToItem(length, 'start')
     }, 100)
   }, [lastLoadedMessages])
 
   // Scroll to the bottom when a new message comes.
   useEffect(() => {
-    const { scrollArea, nearBottom } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const { nearBottom } = ref.current
     if (scrollArea === null || !nearBottom) {
       return
     }
@@ -166,7 +160,7 @@ export const ReactWindow = () => {
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { scrollArea } = ref.current
+    const scrollArea = scrollAreaRef.current
     if (scrollArea === null) {
       return
     }
@@ -175,6 +169,19 @@ export const ReactWindow = () => {
       top: scrollArea.scrollHeight,
     })
   }, [])
+
+  const totalMessages = messages.concat(lastLoadedMessages)
+
+  const context: Context = {
+    isLoading,
+    hasMore,
+    headerRef,
+    footerRef,
+  }
+
+  const data: Data = {
+    totalMessages,
+  }
 
   const getItemKey = (index: number) => {
     const message = totalMessages.at(-index - 1)
@@ -198,8 +205,10 @@ export const ReactWindow = () => {
 
   // Measure item sizes and apply them to the list component.
   useLayoutEffect(() => {
-    const { list, itemsContainer, itemSizes } = ref.current
-    if (list === null || itemsContainer === null) {
+    const variableSizeList = variableSizeListRef.current
+    const itemsContainer = itemsContainerRef.current
+    const { itemSizes } = ref.current
+    if (variableSizeList === null || itemsContainer === null) {
       return
     }
 
@@ -230,12 +239,12 @@ export const ReactWindow = () => {
       return
     }
 
-    list.resetAfterIndex(resetFrom, false)
+    variableSizeList.resetAfterIndex(resetFrom, false)
 
     // Fix the scroll value based on the difference between initial and actual item sizes.
     // You can remove this block if you do not mind flickering by the difference.
     {
-      const { scrollArea } = ref.current
+      const scrollArea = scrollAreaRef.current
       if (scrollArea === null) {
         return
       }
@@ -267,9 +276,9 @@ export const ReactWindow = () => {
           <VariableSizeList<Data>
             width={width}
             height={height}
-            ref={list => (ref.current.list = list)}
-            outerRef={element => (ref.current.scrollArea = element)}
-            innerRef={element => (ref.current.itemsContainer = element)}
+            ref={variableSizeListRef}
+            outerRef={scrollAreaRef}
+            innerRef={itemsContainerRef}
             itemData={data}
             itemCount={totalMessages.length}
             itemKey={getItemKey}

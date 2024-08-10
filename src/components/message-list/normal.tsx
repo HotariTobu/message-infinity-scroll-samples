@@ -8,16 +8,19 @@ export const Normal = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
     useMessages()
 
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null)
+  const lastLoadedAreaRef = useRef<HTMLDivElement | null>(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
+  const footerRef = useRef<HTMLDivElement | null>(null)
+
   const ref = useRef({
-    scrollArea: null as Element | null,
-    lastLoadedArea: null as Element | null,
-    header: null as Element | null,
-    footer: null as Element | null,
     nearBottom: false,
   })
 
   useEffect(() => {
-    const { scrollArea, header, footer } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const header = headerRef.current
+    const footer = footerRef.current
     if (scrollArea === null || header === null || footer === null) {
       return
     }
@@ -47,7 +50,8 @@ export const Normal = () => {
 
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
-    const { scrollArea, lastLoadedArea } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const lastLoadedArea = lastLoadedAreaRef.current
     if (scrollArea === null || lastLoadedArea === null) {
       return
     }
@@ -59,7 +63,8 @@ export const Normal = () => {
 
   // Scroll to the bottom when a new message comes.
   useEffect(() => {
-    const { scrollArea, nearBottom } = ref.current
+    const scrollArea = scrollAreaRef.current
+    const { nearBottom } = ref.current
     if (scrollArea === null || !nearBottom) {
       return
     }
@@ -72,7 +77,7 @@ export const Normal = () => {
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { scrollArea } = ref.current
+    const scrollArea = scrollAreaRef.current
     if (scrollArea === null) {
       return
     }
@@ -83,14 +88,11 @@ export const Normal = () => {
   }, [])
 
   return (
-    <div
-      className="h-full overflow-auto contain-strict"
-      ref={element => (ref.current.scrollArea = element)}
-    >
+    <div className="h-full overflow-auto contain-strict" ref={scrollAreaRef}>
       <div className="relative">
         <div
           className="p-2 empty:pt-0 pb-0 gap-2 flex flex-col-reverse"
-          ref={element => (ref.current.lastLoadedArea = element)}
+          ref={lastLoadedAreaRef}
         >
           {lastLoadedMessages.map(message => (
             <MessageCard message={message} key={message.messageId} />
@@ -105,10 +107,10 @@ export const Normal = () => {
         <LoadingTrigger
           isLoading={isLoading}
           hasMore={hasMore}
-          ref={element => (ref.current.header = element)}
+          ref={headerRef}
           onClick={loadMore}
         />
-        <FollowingTrigger ref={element => (ref.current.footer = element)} />
+        <FollowingTrigger ref={footerRef} />
       </div>
     </div>
   )
