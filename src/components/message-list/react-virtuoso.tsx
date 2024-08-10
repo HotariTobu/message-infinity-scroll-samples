@@ -46,7 +46,10 @@ export const ReactVirtuoso = () => {
     }
 
     setTimeout(() => {
-      virtuoso.scrollToIndex({ index: 'LAST', behavior: 'smooth' })
+      virtuoso.scrollToIndex({
+        index: 'LAST',
+        behavior: 'smooth',
+      })
     })
   }, [messages])
 
@@ -57,7 +60,9 @@ export const ReactVirtuoso = () => {
       return
     }
 
-    virtuoso.scrollToIndex({ index: 'LAST' })
+    virtuoso.scrollToIndex({
+      index: 'LAST',
+    })
   }, [])
 
   return (

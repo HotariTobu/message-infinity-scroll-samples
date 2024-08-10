@@ -59,26 +59,26 @@ export const Normal = () => {
 
   // Scroll to the bottom when a new message comes.
   useEffect(() => {
-    const { footer, nearBottom } = ref.current
-    if (footer === null || !nearBottom) {
+    const { scrollArea, nearBottom } = ref.current
+    if (scrollArea === null || !nearBottom) {
       return
     }
 
-    footer.scrollIntoView({
+    scrollArea.scrollTo({
+      top: scrollArea.scrollHeight,
       behavior: 'smooth',
-      block: 'end',
     })
   }, [messages])
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { footer } = ref.current
-    if (footer === null) {
+    const { scrollArea } = ref.current
+    if (scrollArea === null) {
       return
     }
 
-    footer.scrollIntoView({
-      block: 'end',
+    scrollArea.scrollTo({
+      top: scrollArea.scrollHeight,
     })
   }, [])
 

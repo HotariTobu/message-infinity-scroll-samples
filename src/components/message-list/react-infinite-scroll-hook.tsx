@@ -62,18 +62,21 @@ export const ReactInfiniteScrollHook = () => {
       return
     }
 
-    scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' })
+    scrollArea.scrollTo({
+      top: scrollArea.scrollHeight,
+      behavior: 'smooth',
+    })
   }, [messages])
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { footer } = ref.current
-    if (footer === null) {
+    const { scrollArea } = ref.current
+    if (scrollArea === null) {
       return
     }
 
-    footer.scrollIntoView({
-      block: 'end',
+    scrollArea.scrollTo({
+      top: scrollArea.scrollHeight,
     })
   }, [])
 

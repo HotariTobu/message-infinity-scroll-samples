@@ -68,20 +68,23 @@ export const TanstackReactVirtual = () => {
       return
     }
 
-    scrollArea.scrollTo({ top: totalSize, behavior: 'smooth' })
+    scrollArea.scrollTo({
+      top: totalSize,
+      behavior: 'smooth',
+    })
   }, [totalSize])
 
   // Scroll to the bottom at first.
   useEffect(() => {
-    const { footer } = ref.current
-    if (footer === null) {
+    const { scrollArea } = ref.current
+    if (scrollArea === null) {
       return
     }
 
-    footer.scrollIntoView({
-      block: 'end',
+    scrollArea.scrollTo({
+      top: virtualizer.getTotalSize(),
     })
-  }, [])
+  }, [virtualizer])
 
   return (
     <div
