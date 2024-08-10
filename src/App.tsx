@@ -12,11 +12,13 @@ import {
 import { Normal } from './components/message-list/normal'
 import { ReactVirtuoso } from './components/message-list/react-virtuoso'
 import { TanstackReactVirtual } from './components/message-list/tanstack-react-virtual'
+import { ReactWindow } from './components/message-list/react-window'
 
 const messageListComponentMap = {
   Normal,
   ReactVirtuoso,
   TanstackReactVirtual,
+  ReactWindow,
 } as const
 type MessageListComponentKey = keyof typeof messageListComponentMap
 
