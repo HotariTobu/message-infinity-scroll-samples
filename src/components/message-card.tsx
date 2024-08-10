@@ -2,12 +2,15 @@ import { useUserStore } from '@/stores/user'
 import { Message } from '@/types/message'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/utils/mergeClassName'
+import { forwardRef, HTMLAttributes } from 'react'
 
-export const MessageCard = (props: {
-  className?: string | undefined
-  message: Message
-}) => {
-  const { body, timestamp } = props.message
+export const MessageCard = forwardRef<
+  HTMLDivElement,
+  Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
+    message: Message
+  }
+>(({ message, className, ...props }, ref) => {
+  const { body, timestamp } = message
   const timeString = timestamp.toLocaleTimeString(void 0, {
     hour12: false,
     hour: 'numeric',
@@ -16,10 +19,12 @@ export const MessageCard = (props: {
 
   const { user } = useUserStore()
 
-  if (props.message.userId === user.userId) {
+  if (message.userId === user.userId) {
     return (
       <div
-        className={cn(props.className, 'flex items-start gap-4 justify-end')}
+        className={cn(className, 'flex items-start gap-4 justify-end')}
+        {...props}
+        ref={ref}
       >
         <div className="bg-primary rounded-lg p-3 max-w-[80%] text-primary-foreground">
           <p className="whitespace-break-spaces">{body}</p>
@@ -34,7 +39,11 @@ export const MessageCard = (props: {
     )
   } else {
     return (
-      <div className={cn(props.className, 'flex items-start gap-4')}>
+      <div
+        className={cn(className, 'flex items-start gap-4')}
+        {...props}
+        ref={ref}
+      >
         <Avatar className="w-8 h-8">
           <AvatarImage src="/avatar.png" alt="Avatar" />
         </Avatar>
@@ -45,4 +54,5 @@ export const MessageCard = (props: {
       </div>
     )
   }
-}
+})
+MessageCard.displayName = 'MessageCard'
