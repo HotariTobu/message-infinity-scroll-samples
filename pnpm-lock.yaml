@@ -46,6 +46,9 @@ importers:
       react-easy-infinite-scroll-hook:
         specifier: ^2.1.4
         version: 2.1.4(react@18.3.1)
+      react-infinite-scroll-hook:
+        specifier: ^4.1.1
+        version: 4.1.1(react@18.3.1)
       react-virtualized:
         specifier: ^9.22.5
         version: 9.22.5(patch_hash=jc33ybllzms4cw46ksedyicb7i)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1481,6 +1484,17 @@ packages:
     resolution: {integrity: sha512-sRbQGWh4BjSvCHTUGQwqf6PtMsOJWYl+RQ7h7BagmNpoWRi+Q/X8qwMZJ5WyzZS6U5vi3OrSGAfjLFPKp73jrg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  react-infinite-scroll-hook@4.1.1:
+    resolution: {integrity: sha512-1bu2572rF3DtjFMhIOzoasLMdYW0vMWxROtl99M5FYGSxm84Ro4aNBZW6ivgE45ofus4Ymo7jIS0Be3zcuLk8g==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  react-intersection-observer-hook@2.1.1:
+    resolution: {integrity: sha512-MeFGpYtcfHB9v6oGqQuHAbSwaWBpd7yZ4wMIeVtboWRdGusAF4V+/8QQ0OKZ36Ez19grYnoDVhRUCjtwI2ZVaw==}
+    peerDependencies:
+      react: '>=16.8.0'
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -3028,6 +3042,15 @@ snapshots:
       scheduler: 0.23.2
 
   react-easy-infinite-scroll-hook@2.1.4(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
+  react-infinite-scroll-hook@4.1.1(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-intersection-observer-hook: 2.1.1(react@18.3.1)
+
+  react-intersection-observer-hook@2.1.1(react@18.3.1):
     dependencies:
       react: 18.3.1
 
