@@ -13,12 +13,14 @@ import { Normal } from './components/message-list/normal'
 import { ReactVirtuoso } from './components/message-list/react-virtuoso'
 import { TanstackReactVirtual } from './components/message-list/tanstack-react-virtual'
 import { ReactWindow } from './components/message-list/react-window'
+import { ReactEasyInfiniteScrollHook } from './components/message-list/react-easy-infinite-scroll-hook'
 
 const messageListComponentMap = {
   Normal,
   ReactVirtuoso,
   TanstackReactVirtual,
   ReactWindow,
+  ReactEasyInfiniteScrollHook,
 } as const
 type MessageListComponentKey = keyof typeof messageListComponentMap
 

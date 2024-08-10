@@ -43,6 +43,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      react-easy-infinite-scroll-hook:
+        specifier: ^2.1.4
+        version: 2.1.4(react@18.3.1)
       react-virtualized:
         specifier: ^9.22.5
         version: 9.22.5(patch_hash=jc33ybllzms4cw46ksedyicb7i)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1473,6 +1476,11 @@ packages:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
       react: ^18.3.1
+
+  react-easy-infinite-scroll-hook@2.1.4:
+    resolution: {integrity: sha512-sRbQGWh4BjSvCHTUGQwqf6PtMsOJWYl+RQ7h7BagmNpoWRi+Q/X8qwMZJ5WyzZS6U5vi3OrSGAfjLFPKp73jrg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -3018,6 +3026,10 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.3.1
       scheduler: 0.23.2
+
+  react-easy-infinite-scroll-hook@2.1.4(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   react-is@16.13.1: {}
 
