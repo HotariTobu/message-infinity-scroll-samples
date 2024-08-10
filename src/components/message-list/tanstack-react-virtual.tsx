@@ -17,6 +17,17 @@ export const TanstackReactVirtual = () => {
     nearBottom: false,
   })
 
+  const totalMessages = messages.concat(lastLoadedMessages)
+
+  const virtualizer = useVirtualizer({
+    count: totalMessages.length,
+    getScrollElement: () => scrollAreaRef.current,
+    estimateSize: () => 100,
+  })
+
+  const totalSize = virtualizer.getTotalSize()
+  const virtualItems = virtualizer.getVirtualItems()
+
   useEffect(() => {
     const scrollArea = scrollAreaRef.current
     const header = headerRef.current
@@ -47,17 +58,6 @@ export const TanstackReactVirtual = () => {
 
     return () => observer.disconnect()
   }, [loadMore])
-
-  const totalMessages = messages.concat(lastLoadedMessages)
-
-  const virtualizer = useVirtualizer({
-    count: totalMessages.length,
-    getScrollElement: () => scrollAreaRef.current,
-    estimateSize: () => 100,
-  })
-
-  const totalSize = virtualizer.getTotalSize()
-  const virtualItems = virtualizer.getVirtualItems()
 
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {

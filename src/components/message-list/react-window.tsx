@@ -35,9 +35,7 @@ const Context = createContext<Context>({
   footerRef: { current: null },
 })
 
-type Data = {
-  totalMessages: Message[]
-}
+type Data = Message[]
 
 const Inner = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ children, ...props }, ref) => {
@@ -59,7 +57,7 @@ const Inner = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 )
 
 const Item = (props: ListChildComponentProps<Data>) => {
-  const { totalMessages } = props.data
+  const totalMessages = props.data
   const message = totalMessages.at(-props.index - 1)
   if (typeof message === 'undefined') {
     return
@@ -85,6 +83,75 @@ export const ReactWindow = () => {
     itemSizes: [] as number[],
     nearBottom: false,
   })
+
+  const [overscanStartIndex, setOverscanStartIndex] = useState(NaN)
+  const [overscanStopIndex, setOverscanStopIndex] = useState(NaN)
+
+  // Measure item sizes and apply them to the list component.
+  useLayoutEffect(() => {
+    const variableSizeList = variableSizeListRef.current
+    const itemsContainer = itemsContainerRef.current
+    const { itemSizes } = ref.current
+    if (variableSizeList === null || itemsContainer === null) {
+      return
+    }
+
+    const { children } = itemsContainer
+
+    let resetFrom: number | null = null
+
+    for (let index = overscanStartIndex; index <= overscanStopIndex; index++) {
+      const size = itemSizes.at(index)
+      if (typeof size === 'number') {
+        continue
+      }
+
+      if (resetFrom === null) {
+        resetFrom = index
+      }
+
+      const childIndex = index - overscanStartIndex
+      const child = children.item(childIndex)
+      if (child === null) {
+        continue
+      }
+
+      itemSizes[index] = child.clientHeight
+    }
+
+    if (resetFrom === null) {
+      return
+    }
+
+    variableSizeList.resetAfterIndex(resetFrom, false)
+
+    // Fix the scroll value based on the difference between initial and actual item sizes.
+    // You can remove this block if you do not mind flickering by the difference.
+    {
+      const scrollArea = scrollAreaRef.current
+      if (scrollArea === null) {
+        return
+      }
+
+      const firstChild = children.item(0)
+      const lastChild = children.item(overscanStopIndex - overscanStartIndex)
+      if (firstChild === null || lastChild === null) {
+        return
+      }
+
+      const { top: firstChildTop } = firstChild.getBoundingClientRect()
+      const { top: lastChildTop } = lastChild.getBoundingClientRect()
+      const currentHeight = lastChildTop - firstChildTop
+
+      const preferredHeight = itemSizes
+        .slice(overscanStartIndex, overscanStopIndex)
+        .reduce((sum, size) => sum + size, 0)
+
+      scrollArea.scrollBy({
+        top: preferredHeight - currentHeight,
+      })
+    }
+  }, [overscanStartIndex, overscanStopIndex])
 
   useEffect(() => {
     const scrollArea = scrollAreaRef.current
@@ -179,10 +246,6 @@ export const ReactWindow = () => {
     footerRef,
   }
 
-  const data: Data = {
-    totalMessages,
-  }
-
   const getItemKey = (index: number) => {
     const message = totalMessages.at(-index - 1)
     if (typeof message === 'undefined') {
@@ -192,8 +255,15 @@ export const ReactWindow = () => {
     }
   }
 
-  const [overscanStartIndex, setOverscanStartIndex] = useState(NaN)
-  const [overscanStopIndex, setOverscanStopIndex] = useState(NaN)
+  const getItemSize = (index: number) => {
+    const { itemSizes } = ref.current
+    const size = itemSizes.at(index)
+    if (typeof size === 'undefined') {
+      return 100
+    } else {
+      return size
+    }
+  }
 
   const handleItemsRendered = ({
     overscanStartIndex,
@@ -202,72 +272,6 @@ export const ReactWindow = () => {
     setOverscanStartIndex(overscanStartIndex)
     setOverscanStopIndex(overscanStopIndex)
   }
-
-  // Measure item sizes and apply them to the list component.
-  useLayoutEffect(() => {
-    const variableSizeList = variableSizeListRef.current
-    const itemsContainer = itemsContainerRef.current
-    const { itemSizes } = ref.current
-    if (variableSizeList === null || itemsContainer === null) {
-      return
-    }
-
-    const { children } = itemsContainer
-
-    let resetFrom: number | null = null
-
-    for (let index = overscanStartIndex; index <= overscanStopIndex; index++) {
-      const size = itemSizes.at(index)
-      if (typeof size === 'number') {
-        continue
-      }
-
-      if (resetFrom === null) {
-        resetFrom = index
-      }
-
-      const childIndex = index - overscanStartIndex
-      const child = children.item(childIndex)
-      if (child === null) {
-        continue
-      }
-
-      itemSizes[index] = child.clientHeight
-    }
-
-    if (resetFrom === null) {
-      return
-    }
-
-    variableSizeList.resetAfterIndex(resetFrom, false)
-
-    // Fix the scroll value based on the difference between initial and actual item sizes.
-    // You can remove this block if you do not mind flickering by the difference.
-    {
-      const scrollArea = scrollAreaRef.current
-      if (scrollArea === null) {
-        return
-      }
-
-      const firstChild = children.item(0)
-      const lastChild = children.item(overscanStopIndex - overscanStartIndex)
-      if (firstChild === null || lastChild === null) {
-        return
-      }
-
-      const { top: firstChildTop } = firstChild.getBoundingClientRect()
-      const { top: lastChildTop } = lastChild.getBoundingClientRect()
-      const currentHeight = lastChildTop - firstChildTop
-
-      const preferredHeight = itemSizes
-        .slice(overscanStartIndex, overscanStopIndex)
-        .reduce((sum, size) => sum + size, 0)
-
-      scrollArea.scrollBy({
-        top: preferredHeight - currentHeight,
-      })
-    }
-  }, [overscanStartIndex, overscanStopIndex])
 
   return (
     <AutoSizer disableWidth>
@@ -279,10 +283,10 @@ export const ReactWindow = () => {
             ref={variableSizeListRef}
             outerRef={scrollAreaRef}
             innerRef={itemsContainerRef}
-            itemData={data}
+            itemData={totalMessages}
             itemCount={totalMessages.length}
             itemKey={getItemKey}
-            itemSize={index => ref.current.itemSizes.at(index) ?? 100}
+            itemSize={getItemSize}
             estimatedItemSize={100}
             onItemsRendered={handleItemsRendered}
             innerElementType={Inner}
