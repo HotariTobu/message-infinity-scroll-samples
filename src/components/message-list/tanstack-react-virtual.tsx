@@ -3,6 +3,7 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { useEffect, useRef } from 'react'
 import { MessageCard } from '../message-card'
 import { LoadingTrigger } from '../loading-trigger'
+import { FollowingTrigger } from '../following-trigger'
 
 export const TanstackReactVirtual = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
@@ -123,10 +124,7 @@ export const TanstackReactVirtual = () => {
           ref={element => (ref.current.header = element)}
           onClick={loadMore}
         />
-        <div
-          className="h-32 absolute bottom-0"
-          ref={element => (ref.current.footer = element)}
-        />
+        <FollowingTrigger ref={element => (ref.current.footer = element)} />
       </div>
     </div>
   )

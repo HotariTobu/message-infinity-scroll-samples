@@ -18,6 +18,7 @@ import {
   VariableSizeList,
 } from 'react-window'
 import { LoadingTrigger } from '../loading-trigger'
+import { FollowingTrigger } from '../following-trigger'
 
 type Context = {
   isLoading: boolean
@@ -50,7 +51,7 @@ const Inner = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
           hasMore={context.hasMore}
           ref={context.headerRef}
         />
-        <div className="h-32 absolute -bottom-2" ref={context.footerRef} />
+        <FollowingTrigger className="-bottom-2" ref={context.footerRef} />
       </div>
     )
   }

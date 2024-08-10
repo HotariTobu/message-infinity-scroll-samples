@@ -2,6 +2,7 @@ import { MessageCard } from '@/components/message-card'
 import { useMessages } from '@/hooks/useMessages'
 import { useEffect, useRef } from 'react'
 import { LoadingTrigger } from '../loading-trigger'
+import { FollowingTrigger } from '../following-trigger'
 
 export const Normal = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
@@ -107,10 +108,7 @@ export const Normal = () => {
           ref={element => (ref.current.header = element)}
           onClick={loadMore}
         />
-        <div
-          className="h-32 absolute bottom-0"
-          ref={element => (ref.current.footer = element)}
-        />
+        <FollowingTrigger ref={element => (ref.current.footer = element)} />
       </div>
     </div>
   )
