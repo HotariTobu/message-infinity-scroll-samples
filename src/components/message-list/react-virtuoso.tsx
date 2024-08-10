@@ -1,6 +1,6 @@
 import { MessageCard } from '@/components/message-card'
 import { useMessages } from '@/hooks/useMessages'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import { LoadingTrigger } from '../loading-trigger'
 
@@ -22,12 +22,6 @@ export const ReactVirtuoso = () => {
   const ref = useRef({
     nearBottom: false,
   })
-
-  const handleAtTop = (atTop: boolean) => {
-    if (atTop) {
-      loadMore()
-    }
-  }
 
   // Scroll into the previous top message when past messages are loaded.
   useEffect(() => {
@@ -66,6 +60,15 @@ export const ReactVirtuoso = () => {
       index: 'LAST',
     })
   }, [])
+
+  const handleAtTop = useCallback(
+    (atTop: boolean) => {
+      if (atTop) {
+        loadMore()
+      }
+    },
+    [loadMore]
+  )
 
   return (
     <Virtuoso
