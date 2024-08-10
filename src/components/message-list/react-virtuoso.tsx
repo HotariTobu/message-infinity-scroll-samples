@@ -1,8 +1,8 @@
-import { LoadingHeader } from '@/components/loading-header'
 import { MessageCard } from '@/components/message-card'
 import { useMessages } from '@/hooks/useMessages'
 import { useEffect, useRef } from 'react'
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
+import { LoadingTrigger } from '../loading-trigger'
 
 type Context = {
   isLoading: boolean
@@ -10,7 +10,7 @@ type Context = {
 }
 
 const Header = (props: { context?: Context }) =>
-  typeof props.context === 'undefined' || <LoadingHeader {...props.context} />
+  typeof props.context === 'undefined' || <LoadingTrigger {...props.context} />
 
 const Footer = () => <div className="h-2" />
 

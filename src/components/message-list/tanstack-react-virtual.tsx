@@ -2,7 +2,7 @@ import { useMessages } from '@/hooks/useMessages'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useEffect, useRef } from 'react'
 import { MessageCard } from '../message-card'
-import { LoadingHeader } from '../loading-header'
+import { LoadingTrigger } from '../loading-trigger'
 
 export const TanstackReactVirtual = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
@@ -117,7 +117,7 @@ export const TanstackReactVirtual = () => {
           })}
         </div>
 
-        <LoadingHeader
+        <LoadingTrigger
           isLoading={isLoading}
           hasMore={hasMore}
           ref={element => (ref.current.header = element)}

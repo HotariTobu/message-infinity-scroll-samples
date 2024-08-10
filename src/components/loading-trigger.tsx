@@ -1,7 +1,7 @@
 import { cn } from '@/utils/mergeClassName'
 import { forwardRef, HTMLAttributes } from 'react'
 
-export const LoadingHeader = forwardRef<
+export const LoadingTrigger = forwardRef<
   HTMLDivElement,
   {
     isLoading: boolean
@@ -20,4 +20,4 @@ export const LoadingHeader = forwardRef<
     />
   </div>
 ))
-LoadingHeader.displayName = 'LoadingHeader'
+LoadingTrigger.displayName = 'LoadingTrigger'

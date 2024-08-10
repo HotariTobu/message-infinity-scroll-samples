@@ -1,4 +1,3 @@
-import { LoadingHeader } from '@/components/loading-header'
 import { MessageCard } from '@/components/message-card'
 import { useMessages } from '@/hooks/useMessages'
 import { Message } from '@/types/message'
@@ -18,6 +17,7 @@ import {
   ListOnItemsRenderedProps,
   VariableSizeList,
 } from 'react-window'
+import { LoadingTrigger } from '../loading-trigger'
 
 type Context = {
   isLoading: boolean
@@ -45,7 +45,7 @@ const Inner = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
       <div className="mb-2 relative" {...props} ref={ref}>
         {children}
 
-        <LoadingHeader
+        <LoadingTrigger
           isLoading={context.isLoading}
           hasMore={context.hasMore}
           ref={context.headerRef}

@@ -1,7 +1,7 @@
-import { LoadingHeader } from '@/components/loading-header'
 import { MessageCard } from '@/components/message-card'
 import { useMessages } from '@/hooks/useMessages'
 import { useEffect, useRef } from 'react'
+import { LoadingTrigger } from '../loading-trigger'
 
 export const Normal = () => {
   const { lastLoadedMessages, messages, isLoading, hasMore, loadMore } =
@@ -101,7 +101,7 @@ export const Normal = () => {
           ))}
         </div>
 
-        <LoadingHeader
+        <LoadingTrigger
           isLoading={isLoading}
           hasMore={hasMore}
           ref={element => (ref.current.header = element)}
