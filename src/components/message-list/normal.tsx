@@ -84,10 +84,10 @@ export const Normal = () => {
 
   return (
     <div
-      className="h-full overflow-auto relative"
+      className="h-full overflow-auto contain-strict"
       ref={element => (ref.current.scrollArea = element)}
     >
-      <div className="absolute inset-x-0">
+      <div className="relative">
         <div
           className="p-2 pb-0 gap-2 flex flex-col-reverse"
           ref={element => (ref.current.lastLoadedArea = element)}
