@@ -1,6 +1,6 @@
 import { MessageCard } from '@/components/message-card'
 import { useMessages } from '@/hooks/useMessages'
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import { LoadingTrigger } from '../loading-trigger'
 
@@ -61,26 +61,29 @@ export const ReactVirtuoso = () => {
     })
   }, [])
 
-  const handleAtTop = useCallback(
-    (atTop: boolean) => {
-      if (atTop) {
-        loadMore()
-      }
-    },
-    [loadMore]
-  )
+  const totalMessages = messages.concat(lastLoadedMessages)
+
+  const handleAtTop = (atTop: boolean) => {
+    if (atTop) {
+      loadMore()
+    }
+  }
+
+  const handleAtBottom = (atBottom: boolean) => {
+    ref.current.nearBottom = atBottom
+  }
 
   return (
     <Virtuoso
       ref={virtuosoRef}
-      context={context}
-      components={{ Header, Footer }}
       followOutput={false}
       atTopThreshold={64}
       atTopStateChange={handleAtTop}
       atBottomThreshold={128}
-      atBottomStateChange={atBottom => (ref.current.nearBottom = atBottom)}
-      data={messages.concat(lastLoadedMessages).toReversed()}
+      atBottomStateChange={handleAtBottom}
+      data={totalMessages.toReversed()}
+      context={context}
+      components={{ Header, Footer }}
       computeItemKey={(_, message) => message.messageId}
       itemContent={(_, message) => (
         <MessageCard className="px-2 pt-2" message={message} />
