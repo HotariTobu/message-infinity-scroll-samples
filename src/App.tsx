@@ -15,6 +15,7 @@ import { TanstackReactVirtual } from './components/message-list/tanstack-react-v
 import { ReactWindow } from './components/message-list/react-window'
 import { ReactEasyInfiniteScrollHook } from './components/message-list/react-easy-infinite-scroll-hook'
 import { ReactInfiniteScrollHook } from './components/message-list/react-infinite-scroll-hook'
+import { ReactVirtualized } from './components/message-list/react-virtualized'
 
 const messageListComponentMap = {
   Normal,
@@ -23,6 +24,7 @@ const messageListComponentMap = {
   ReactWindow,
   ReactEasyInfiniteScrollHook,
   ReactInfiniteScrollHook,
+  ReactVirtualized,
 } as const
 type MessageListComponentKey = keyof typeof messageListComponentMap
 
