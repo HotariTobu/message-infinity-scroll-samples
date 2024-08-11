@@ -16,6 +16,7 @@ import { ReactWindow } from './components/message-list/react-window'
 import { ReactEasyInfiniteScrollHook } from './components/message-list/react-easy-infinite-scroll-hook'
 import { ReactInfiniteScrollHook } from './components/message-list/react-infinite-scroll-hook'
 import { ReactVirtualized } from './components/message-list/react-virtualized'
+import { ReactInfiniteScroller } from './components/message-list/react-infinite-scroller'
 
 const messageListComponentMap = {
   Normal,
@@ -25,6 +26,7 @@ const messageListComponentMap = {
   ReactEasyInfiniteScrollHook,
   ReactInfiniteScrollHook,
   ReactVirtualized,
+  ReactInfiniteScroller,
 } as const
 type MessageListComponentKey = keyof typeof messageListComponentMap
 
