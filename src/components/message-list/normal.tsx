@@ -108,7 +108,6 @@ export const Normal = () => {
           isLoading={isLoading}
           hasMore={hasMore}
           ref={headerRef}
-          onClick={loadMore}
         />
         <FollowingTrigger ref={footerRef} />
       </div>
