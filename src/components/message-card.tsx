@@ -33,7 +33,7 @@ export const MessageCard = forwardRef<
           </div>
         </div>
         <Avatar className="w-8 h-8">
-          <AvatarImage src="/avatar.png" alt="Avatar" />
+          <AvatarImage src="./avatar.png" alt="Avatar" />
         </Avatar>
       </div>
     )
@@ -45,7 +45,7 @@ export const MessageCard = forwardRef<
         ref={ref}
       >
         <Avatar className="w-8 h-8">
-          <AvatarImage src="/avatar.png" alt="Avatar" />
+          <AvatarImage src="./avatar.png" alt="Avatar" />
         </Avatar>
         <div className="bg-muted rounded-lg p-3 max-w-[80%]">
           <p className="whitespace-break-spaces">{body}</p>

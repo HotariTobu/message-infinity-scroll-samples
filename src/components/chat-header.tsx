@@ -11,7 +11,7 @@ export const ChatHeader = (props: PropsWithChildren) => {
         {props.children}
         <div className="flex items-center gap-2">
           <Avatar className="w-8 h-8">
-            <AvatarImage src="/avatar.png" alt="Avatar" />
+            <AvatarImage src="./avatar.png" alt="Avatar" />
           </Avatar>
           <span className="text-sm">{user.name}</span>
         </div>
