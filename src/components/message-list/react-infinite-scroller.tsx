@@ -88,8 +88,8 @@ export const ReactInfiniteScroller = () => {
     <div className="h-full overflow-auto contain-strict" ref={scrollAreaRef}>
       <InfiniteScroll
         className="relative"
-        loadMore={loadMore}
         hasMore={hasMore}
+        loadMore={loadMore}
         initialLoad={false}
         isReverse={true}
         threshold={128}
