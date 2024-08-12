@@ -92,7 +92,7 @@ export const ReactInfiniteScroller = () => {
         loadMore={loadMore}
         initialLoad={false}
         isReverse={true}
-        threshold={128}
+        threshold={64}
         loader={
           <div className="contents" key="loader">
             <LoadingTrigger isLoading={isLoading} hasMore={hasMore} />
